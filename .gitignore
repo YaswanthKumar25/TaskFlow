@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+parts/
+sdist/
+wheels/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+backend/env/
+
+# Django and local data
+*.sqlite3
+*.sqlite3-journal
+media/
+staticfiles/
+
+# Environment files and credentials
+.env
+.env.*
+!.env.example
+
+# Node and Vite
+node_modules/
+frontend/taskflow/node_modules/
+frontend/taskflow/dist/
+frontend/taskflow/dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Test, coverage, and generated files
+.pytest_cache/
+.coverage
+htmlcov/
+coverage/
+*.log
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
