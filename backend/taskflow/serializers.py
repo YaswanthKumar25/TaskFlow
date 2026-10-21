@@ -9,7 +9,7 @@ from django.contrib.auth.password_validation import validate_password
 class TaskFlowSerializers(serializers.ModelSerializer):
     class Meta:
         model=TaskFlow
-        fields=['title','description','due_date','status','priority','user','created_at','updated_at']
+        fields=['id','title','description','due_date','status','priority','user','created_at','updated_at']
         read_only_fields=['user','created_at','updated_at']
 
 
