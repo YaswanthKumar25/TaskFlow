@@ -1,7 +1,17 @@
-
 import React, { useEffect, useState } from "react";
 import api from "./api";
 import { useNavigate, useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCalendarDays,
+  faCartShopping,
+  faChartSimple,
+  faFireFlameCurved,
+  faHeart,
+  faPencil,
+  faPenToSquare,
+} from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 const AddTask = () => {
   const { id } = useParams();
@@ -75,9 +85,7 @@ const AddTask = () => {
     setTask({
       title: editTask.title || "",
       description: editTask.description || "",
-      due_date: editTask.due_date
-        ? editTask.due_date.slice(0, 16)
-        : "",
+      due_date: editTask.due_date ? editTask.due_date.slice(0, 16) : "",
       status: editTask.status || "",
       priority: editTask.priority || "",
     });
@@ -102,7 +110,7 @@ const AddTask = () => {
     const title = task.title.trim();
 
     if (title.length < 3) {
-      setError("Title must contain at least 3 characters.");
+      toast.error("Title must contain at least 3 characters.");
       return;
     }
 
@@ -118,7 +126,7 @@ const AddTask = () => {
       Number.isNaN(selectedDate.getTime()) ||
       selectedDate.getTime() <= Date.now()
     ) {
-      setError("Due date must be in the future.");
+      toast.error("Due date must be in the future.");
       return;
     }
 
@@ -156,85 +164,109 @@ const AddTask = () => {
   }
 
   return (
-    <div>
-      <h2>{id ? "Update Task" : "Add Task"}</h2>
+    <>
+      <div className=" min-h-screen h-auto p-5 flex flex-col gap-5 bg-gray-300">
+        <h2 className="text-center text-5xl">
+          {id ? "Update Task" : "Add Task"}
+        </h2>
 
-      {error && (
-        <p role="alert" style={{ color: "red", whiteSpace: "pre-line" }}>
-          {error}
-        </p>
-      )}
+        {error && (
+          <p role="alert" style={{ color: "red", whiteSpace: "pre-line" }}>
+            {error}
+          </p>
+        )}
+        <div className=" flex justify-center ">
+          <form
+            onSubmit={submitData}
+            className="bg-gray-50 rounded-2xl w-full flex flex-col justify-center px-5 py-3 lg:w-1/2 gap-3"
+          >
+            <label htmlFor="title" className="text-xl  font-mono">
+              <FontAwesomeIcon icon={faPencil} /> Title
+            </label>
+            <input
+              className="border rounded-2xl p-2 text-xl outline-1 outline-blue-400 active:outline-blue-600"
+              id="title"
+              type="text"
+              name="title"
+              placeholder="Enter title"
+              value={task.title}
+              onChange={handleChange}
+              required
+              minLength={3}
+            />
 
-      <form onSubmit={submitData}>
-        <label htmlFor="title">Title</label>
-        <input
-          id="title"
-          type="text"
-          name="title"
-          placeholder="Enter title"
-          value={task.title}
-          onChange={handleChange}
-          required
-          minLength={3}
-        />
+            <label htmlFor="description" className="text-xl  font-mono">
+              {" "}
+              <FontAwesomeIcon icon={faPenToSquare} /> Description
+            </label>
+            <textarea
+              className="border rounded-2xl p-2 text-xl outline-1 outline-blue-400 active:outline-blue-600"
+              id="description"
+              name="description"
+              placeholder="Enter description"
+              value={task.description}
+              onChange={handleChange}
+              required
+            />
 
-        <label htmlFor="description">Description</label>
-        <textarea
-          id="description"
-          name="description"
-          placeholder="Enter description"
-          value={task.description}
-          onChange={handleChange}
-          required
-        />
+            <label htmlFor="due_date" className="text-xl  font-mono">
+              <FontAwesomeIcon icon={faCalendarDays} /> Due date
+            </label>
+            <input
+              className="border rounded-2xl p-2 text-xl outline-1 outline-blue-400 active:outline-blue-600"
+              id="due_date"
+              type="datetime-local"
+              name="due_date"
+              value={task.due_date}
+              onChange={handleChange}
+              required
+            />
 
-        <label htmlFor="due_date">Due date</label>
-        <input
-          id="due_date"
-          type="datetime-local"
-          name="due_date"
-          value={task.due_date}
-          onChange={handleChange}
-          required
-        />
+            <label htmlFor="status" className="text-xl  font-mono">
+              <FontAwesomeIcon icon={faFireFlameCurved} /> Status
+            </label>
+            <select
+              className="border rounded-2xl p-2 text-xl outline-1 outline-blue-400 active:outline-blue-600"
+              id="status"
+              name="status"
+              value={task.status}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select status</option>
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
 
-        <label htmlFor="status">Status</label>
-        <select
-          id="status"
-          name="status"
-          value={task.status}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select status</option>
-          <option value="pending">Pending</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
-        </select>
+            <label htmlFor="priority" className="text-xl  font-mono">
+              <FontAwesomeIcon icon={faChartSimple} /> Priority
+            </label>
+            <select
+              className="border rounded-2xl p-2 text-xl outline-1 outline-blue-400 active:outline-blue-600"
+              id="priority"
+              name="priority"
+              value={task.priority}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select priority</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
 
-        <label htmlFor="priority">Priority</label>
-        <select
-          id="priority"
-          name="priority"
-          value={task.priority}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select priority</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-
-        <button type="submit" disabled={saving}>
-          {saving
-            ? "Saving..."
-            : id
-              ? "Update Task"
-              : "Add Task"}
-        </button>
-      </form>
-    </div>
+            <button
+              type="submit"
+              disabled={saving}
+              className="text-2xl border p-2 rounded-2xl bg-blue-600 text-white font-semibold font-sans my-5 transition-all duration-300 ease-out hover:scale-105"
+            >
+              {saving ? "Saving..." : id ? "Update Task" : "Add Task"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </>
   );
 };
 

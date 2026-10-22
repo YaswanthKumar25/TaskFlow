@@ -7,11 +7,13 @@ import Login from "./Login";
 import Tasks from "./Tasks";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AddTask from "./AddTask";
+import { ToastContainer, toast } from "react-toastify";
 
 function App() {
   return (
     <>
       <Router>
+        <ToastContainer />
         <Routes>
           <Route element={<Login />} path={"/"} />
           <Route element={<AddTask />} path={`/addtask`} />

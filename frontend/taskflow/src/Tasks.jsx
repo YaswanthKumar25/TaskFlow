@@ -1,159 +1,76 @@
-
 import React, { useEffect, useState } from "react";
 import api from "./api";
-import { useNavigate } from "react-router-dom";
-
+import { Navigate, useNavigate } from "react-router-dom";
 const Tasks = () => {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [deletingId, setDeletingId] = useState(null);
-
   const navigate = useNavigate();
+  const [tasks, setTasks] = useState([]);
+  const completedTasks = tasks.filter((task) => task.status === "completed");
+  const in_progressTasks = tasks.filter(
+    (task) => task.status === "in_progress",
+  );
+  const pendingTasks = tasks.filter((task) => task.status === "pending");
 
-  function getErrorMessage(error) {
-    const data = error.response?.data;
-
-    if (data && typeof data === "object") {
-      return Object.entries(data)
-        .map(([field, messages]) => {
-          const message = Array.isArray(messages)
-            ? messages.join(" ")
-            : typeof messages === "string"
-              ? messages
-              : JSON.stringify(messages);
-
-          return `${field}: ${message}`;
-        })
-        .join("\n");
-    }
-
-    return error.message || "Something went wrong. Please try again.";
-  }
-
-  // Fetch the current user's tasks.
-  useEffect(() => {
-    async function fetchTasks() {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setLoading(false);
-        navigate("/");
-        return;
-      }
-
-      setLoading(true);
-      setError("");
-
-      try {
-        const response = await api.get("");
-        setTasks(response.data);
-      } catch (error) {
-        if (error.response?.status === 401) {
-          localStorage.removeItem("token");
-          navigate("/");
-          return;
-        }
-
-        setError(
-          `Failed to load tasks. ${
-            getErrorMessage(error)
-          }`
-        );
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchTasks();
-  }, [navigate]);
-
-  function handleEdit(task) {
-    navigate(`/edittask/${task.id}`);
-  }
-
-  function handleAddTask() {
-    navigate("/addtask");
-  }
-
-  function handleLogout() {
-    localStorage.removeItem("token");
-    navigate("/");
-  }
-
-  async function handleDelete(id) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this task?"
-    );
-
-    if (!confirmed) return;
-
-    setError("");
-    setDeletingId(id);
-
+  async function getTasks() {
     try {
-      await api.delete(`${id}/`);
-
-      setTasks((prev) =>
-        prev.filter((task) => task.id !== id)
-      );
+      const response = await api.get("");
+      setTasks(response.data);
     } catch (error) {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
-        navigate("/");
-        return;
-      }
-
-      setError(
-        `Failed to delete task. ${
-          getErrorMessage(error)
-        }`
-      );
-    } finally {
-      setDeletingId(null);
+      console.log(error);
     }
   }
+  useEffect(() => {
+    const Token = localStorage.getItem("token");
+    if (!Token) {
+      navigate("/");
+    }
+    getTasks();
+  }, []);
 
   return (
-    <div>
+    <div className="border-2 min-h-screen flex flex-col  items-center bg-gray-300">
       <h1>Tasks</h1>
-
-      {error && (
-        <p role="alert" style={{ color: "red", whiteSpace: "pre-line" }}>
-          {error}
-        </p>
-      )}
-
-      {loading ? (
-        <p>Loading tasks...</p>
-      ) : tasks.length > 0 ? (
-        tasks.map((task) => (
-          <div key={task.id}>
-            <h2>{task.title}</h2>
-            <p>{task.description}</p>
-            <p>Status: {task.status}</p>
-            <p>Priority: {task.priority}</p>
-
-            <button onClick={() => handleEdit(task)}>
-              Edit
-            </button>
-
-            <button
-              onClick={() => handleDelete(task.id)}
-              disabled={deletingId === task.id}
-            >
-              {deletingId === task.id
-                ? "Deleting..."
-                : "Delete"}
-            </button>
-          </div>
-        ))
-      ) : (
-        <p>No tasks found.</p>
-      )}
-
-      <button onClick={handleAddTask}>Add Task</button>
-      <button onClick={handleLogout}>Logout</button>
+      <div className="border-2 grid lg:grid-cols-3 sm:grid-cols-2 w-full px-10 py-5 gap-20 bg-white rounded-2xl">
+        <div className="flex flex-col border-red-500 border w-full">
+          <h1 className="text-center text-2xl font-semibold">
+            Completed Tasks
+          </h1>
+          {completedTasks.map((task) => (
+            <div className="flex flex-col gap-2 text-xl p-3">
+              <h1>{task.title}</h1>
+              <h2>{task.description}</h2>
+              <h2>{task.due_date}</h2>
+              <h2>{task.status}</h2>
+              <h2>{task.priority}</h2>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col border-red-500 border w-full">
+          <h1 className="text-center text-2xl font-semibold">
+            in_progress Tasks
+          </h1>
+          {in_progressTasks.map((task) => (
+            <div className="flex flex-col gap-2 text-xl p-3">
+              <h1>{task.title}</h1>
+              <h2>{task.description}</h2>
+              <h2>{task.due_date}</h2>
+              <h2>{task.status}</h2>
+              <h2>{task.priority}</h2>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col border-red-500 border w-full">
+          <h1 className="text-center text-2xl font-semibold">pending Tasks</h1>
+          {pendingTasks.map((task) => (
+            <div className="flex flex-col gap-2 text-xl p-3">
+              <h1>{task.title}</h1>
+              <h2>{task.description}</h2>
+              <h2>{task.due_date}</h2>
+              <h2>{task.status}</h2>
+              <h2>{task.priority}</h2>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
