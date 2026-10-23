@@ -16,8 +16,6 @@ function App() {
         <ToastContainer />
         <Routes>
           <Route element={<Login />} path={"/"} />
-          <Route element={<AddTask />} path={`/addtask`} />
-          <Route element={<AddTask />} path={`/edittask/:id`} />
           <Route element={<Tasks />} path={"/tasks"} />
         </Routes>
       </Router>
