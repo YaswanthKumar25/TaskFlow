@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import api from "./api";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFaceFrownOpen,
-  faPencil,
-  faSpinner,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faFaceFrownOpen, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import AddTask from "./AddTask";
 import Task from "./Task";
+import { getErrorMessage } from "./utils";
+
 const Tasks = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
@@ -22,15 +19,18 @@ const Tasks = () => {
   );
   const pendingTasks = tasks.filter((task) => task.status === "pending");
 
-  async function getTasks() {
+  const getTasks = useCallback(async () => {
     try {
       const response = await api.get("");
       setTasks(response.data);
-      setloading(false);
     } catch (error) {
-      console.log(error.response.status);
+      console.log("API", error);
+      toast.error(getErrorMessage(error));
+    } finally {
+      setloading(false);
     }
-  }
+  }, []);
+
   function edittask(task) {
     setEditTask(task);
   }
@@ -39,8 +39,8 @@ const Tasks = () => {
       await api.delete(`${id}/`);
       setTasks((prev) => prev.filter((task) => task.id !== id));
       toast.success("Task has been deleted successfuly");
-    } catch {
-      toast.error(error);
+    } catch (error) {
+      toast.error(error.response?.data);
     }
   }
   useEffect(() => {
@@ -69,9 +69,11 @@ const Tasks = () => {
                 {completedTasks.length > 0 ? (
                   completedTasks.map((task) => (
                     <Task
+                      key={task.id}
                       task={task}
                       deleteTask={deleteTask}
                       edittask={edittask}
+                      varient={"completed"}
                     />
                   ))
                 ) : (
@@ -88,9 +90,11 @@ const Tasks = () => {
                 {in_progressTasks.length > 0 ? (
                   in_progressTasks.map((task) => (
                     <Task
+                      key={task.id}
                       task={task}
                       deleteTask={deleteTask}
                       edittask={edittask}
+                      varient={"in_progress"}
                     />
                   ))
                 ) : (
@@ -107,9 +111,11 @@ const Tasks = () => {
                 {pendingTasks.length > 0 ? (
                   pendingTasks.map((task) => (
                     <Task
+                      key={task.id}
                       task={task}
                       deleteTask={deleteTask}
                       edittask={edittask}
+                      varient={"pending"}
                     />
                   ))
                 ) : (

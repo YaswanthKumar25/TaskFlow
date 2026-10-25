@@ -13,6 +13,7 @@ import {
   faPenToSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
+import { getErrorMessage } from "./utils";
 import Tasks from "./Tasks";
 
 const AddTask = ({ getTasks, editTask }) => {
@@ -68,7 +69,6 @@ const AddTask = ({ getTasks, editTask }) => {
           status: "",
           priority: "",
         });
-        
       } else {
         await api.post("", task);
         getTasks();
@@ -81,10 +81,7 @@ const AddTask = ({ getTasks, editTask }) => {
         });
       }
     } catch (error) {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
-        return;
-      }
+      toast.error(getErrorMessage(error));
     }
   }
 

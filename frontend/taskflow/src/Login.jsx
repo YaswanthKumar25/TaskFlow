@@ -3,6 +3,7 @@ import api from "./api";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getErrorMessage } from "./utils";
 import {
   faRepeat,
   faUser,
@@ -35,7 +36,7 @@ const Login = () => {
       }
       console.log(localStorage.getItem("token"));
     } catch (error) {
-      toast.error(error.response?.data.error);
+      toast.error(getErrorMessage(error));
     } finally {
       setVerifying(false);
     }
