@@ -11,12 +11,14 @@ import {
   faHourglass1,
   faPencil,
   faPenToSquare,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "./utils";
 import Tasks from "./Tasks";
 
 const AddTask = ({ getTasks, editTask }) => {
+  const [submiting, setSubmiting] = useState(false);
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -24,6 +26,7 @@ const AddTask = ({ getTasks, editTask }) => {
     status: "",
     priority: "",
   });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   // Populate the form with existing task details.
   useEffect(() => {
@@ -39,28 +42,44 @@ const AddTask = ({ getTasks, editTask }) => {
   }, [editTask]);
 
   function handleChange(e) {
-    setTask({ ...task, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setTask({ ...task, [name]: value });
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   }
 
   async function submitData(e) {
     e.preventDefault();
     const title = task.title.trim();
     if (title.length < 3) {
-      toast.error("Title must contain at least 3 characters.");
+      const message = "Title must contain at least 3 characters.";
+      setErrors({ title: message });
+      toast.error(message);
       return;
     }
     const selectedDate = new Date(task.due_date);
+
     if (
+      !task.due_date ||
       Number.isNaN(selectedDate.getTime()) ||
       selectedDate.getTime() <= Date.now()
     ) {
-      toast.error("Due date must be in the future.");
+      const message = "Due date must be in the future.";
+
+      setErrors((prev) => ({
+        ...prev,
+        due_date: message,
+      }));
+
+      toast.error(message);
       return;
     }
-
     try {
       if (editTask) {
         await api.put(`${editTask.id}/`, task);
+        setSubmiting(true);
         getTasks();
         setTask({
           title: "",
@@ -71,6 +90,7 @@ const AddTask = ({ getTasks, editTask }) => {
         });
       } else {
         await api.post("", task);
+        setSubmiting(true);
         getTasks();
         setTask({
           title: "",
@@ -82,6 +102,8 @@ const AddTask = ({ getTasks, editTask }) => {
       }
     } catch (error) {
       toast.error(getErrorMessage(error));
+    } finally {
+      setSubmiting(false);
     }
   }
 
@@ -110,6 +132,9 @@ const AddTask = ({ getTasks, editTask }) => {
               required
               minLength={3}
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+            )}
 
             <label htmlFor="description" className="  font-mono">
               {" "}
@@ -137,6 +162,9 @@ const AddTask = ({ getTasks, editTask }) => {
               onChange={handleChange}
               required
             />
+            {errors.due_date && (
+              <p className="text-red-500 text-sm mt-1">{errors.due_date}</p>
+            )}
 
             <label htmlFor="status" className="  font-mono">
               <FontAwesomeIcon icon={faFireFlameCurved} /> Status
@@ -176,7 +204,17 @@ const AddTask = ({ getTasks, editTask }) => {
               type="submit"
               className="text-2xl border p-2 rounded-2xl bg-blue-600 text-white font-semibold font-sans my-5 transition-all duration-300 ease-out hover:scale-105"
             >
-              {editTask ? "Update Task" : "Add Task"}
+              {submiting ? (
+                <h1>
+                  {" "}
+                  <FontAwesomeIcon icon={faSpinner} spin />
+                  Submitting
+                </h1>
+              ) : editTask ? (
+                "Update Task"
+              ) : (
+                "Add Task"
+              )}
             </button>
           </form>
         </div>
