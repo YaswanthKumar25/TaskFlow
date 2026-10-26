@@ -35,12 +35,17 @@ const Tasks = () => {
     setEditTask(task);
   }
   async function deleteTask(id) {
-    try {
-      await api.delete(`${id}/`);
-      setTasks((prev) => prev.filter((task) => task.id !== id));
-      toast.success("Task has been deleted successfuly");
-    } catch (error) {
-      toast.error(error.response?.data);
+    const conf = window.confirm("are you sure to delete");
+    console.log(conf);
+    if (conf) {
+      try {
+        await api.delete(`${id}/`);
+        setTasks((prev) => prev.filter((task) => task.id !== id));
+        setEditTask((prev) => (prev?.id === id ? null : prev));
+        toast.success("Task has been deleted successfuly");
+      } catch (error) {
+        toast.error(getErrorMessage(error));
+      }
     }
   }
   useEffect(() => {
