@@ -12,7 +12,7 @@ import {
 import { toast } from "react-toastify";
 import { getErrorMessage } from "./utils";
 
-const AddTask = ({ getTasks, editTask }) => {
+const AddTask = ({ getTasks, editTask, setedittasknull }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [task, setTask] = useState({
@@ -110,6 +110,7 @@ const AddTask = ({ getTasks, editTask }) => {
         });
 
         toast.success("Task updated successfully.");
+        setedittasknull();
       } else {
         await api.post("", {
           ...task,

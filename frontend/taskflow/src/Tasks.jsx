@@ -31,6 +31,9 @@ const Tasks = () => {
     }
   }, []);
 
+  function setedittasknull() {
+    setEditTask(null);
+  }
   function edittask(task) {
     setEditTask(task);
   }
@@ -59,14 +62,14 @@ const Tasks = () => {
 
   return (
     <>
-      <div className=" min-h-screen flex w-screen bg-gray-300 ">
+      <div className="flex min-h-screen w-full flex-col bg-gray-300 lg:flex-row">
         {loading ? (
           <h1 className="text-5xl text-center">
             <FontAwesomeIcon icon={faSpinner} spin /> Loading ...
           </h1>
         ) : (
           <>
-            <div className="lg:w-full grid lg:grid-cols-3 sm:grid-cols-2 px-5 py-5 gap-10 ">
+            <div className="grid grid-cols-1 gap-5 px-4 py-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8 lg:w-full">
               <div className="flex flex-col w-full">
                 <h1 className="text-center sm:text-xl lg:text-2xl font-semibold">
                   Completed Tasks
@@ -131,8 +134,12 @@ const Tasks = () => {
                 )}
               </div>
             </div>
-            <div className="sticky top-0 h-screen overflow-scroll">
-              <AddTask getTasks={getTasks} editTask={editTask} />
+            <div className="h-auto w-full lg:sticky lg:top-0 lg:h-screen lg:w-80 lg:shrink-0 lg:overflow-y-auto">
+              <AddTask
+                getTasks={getTasks}
+                editTask={editTask}
+                setedittasknull={setedittasknull}
+              />
             </div>
           </>
         )}
