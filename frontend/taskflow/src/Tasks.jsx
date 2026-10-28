@@ -85,15 +85,21 @@ const Tasks = () => {
                     />
                   ))
                 ) : (
-                  <h1 className="text-3xl text-center my-5 animate-pulse">
-                    <FontAwesomeIcon icon={faFaceFrownOpen} /> There is No
-                    Completed Tasks
-                  </h1>
+                  <div className="my-5 flex flex-col items-center gap-3 text-center text-gray-500">
+                    <FontAwesomeIcon
+                      icon={faFaceFrownOpen}
+                      className="text-3xl"
+                      aria-hidden="true"
+                    />
+                    <p className="text-base">
+                      No completed tasks yet. Complete a task to see it here!
+                    </p>
+                  </div>
                 )}
               </div>
               <div className="flex flex-col  w-full">
-                <h1 className="text-center text-2xl font-semibold">
-                  in_progress Tasks
+                <h1 className="text-center text-xl font-semibold lg:text-2xl">
+                  In Progress Tasks
                 </h1>
                 {in_progressTasks.length > 0 ? (
                   in_progressTasks.map((task) => (
@@ -106,15 +112,21 @@ const Tasks = () => {
                     />
                   ))
                 ) : (
-                  <h1 className="text-3xl text-center my-5 animate-pulse">
-                    <FontAwesomeIcon icon={faFaceFrownOpen} /> There is No
-                    in_progress Tasks
-                  </h1>
+                  <div className="my-5 flex flex-col items-center gap-3 text-center text-gray-500">
+                    <FontAwesomeIcon
+                      icon={faFaceFrownOpen}
+                      className="text-3xl"
+                      aria-hidden="true"
+                    />
+                    <p className="text-base">
+                      No In Progress tasks yet. Add a task to see it here!
+                    </p>
+                  </div>
                 )}
               </div>
               <div className="flex flex-col  w-full">
-                <h1 className="text-center text-2xl font-semibold">
-                  pending Tasks
+                <h1 className="text-center text-xl font-semibold lg:text-2xl">
+                  Pending
                 </h1>
                 {pendingTasks.length > 0 ? (
                   pendingTasks.map((task) => (
@@ -127,10 +139,16 @@ const Tasks = () => {
                     />
                   ))
                 ) : (
-                  <h1 className="text-3xl text-center my-5 animate-pulse">
-                    <FontAwesomeIcon icon={faFaceFrownOpen} /> There is No
-                    pending Tasks
-                  </h1>
+                  <div className="my-5 flex flex-col items-center gap-3 text-center text-gray-500">
+                    <FontAwesomeIcon
+                      icon={faFaceFrownOpen}
+                      className="text-3xl"
+                      aria-hidden="true"
+                    />
+                    <p className="text-base">
+                      No Pending tasks yet. Create a task to see it here!
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

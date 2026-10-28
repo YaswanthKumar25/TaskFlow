@@ -30,7 +30,15 @@ const Task = ({ task, deleteTask, edittask, varient, setEditTask }) => {
       <p className="break-words whitespace-pre-wrap text-sm leading-6 text-gray-600">
         {task.description}
       </p>
-      <h2>{task.due_date}</h2>
+      <p className="text-sm text-gray-500">
+        {new Date(task.due_date).toLocaleString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </p>
       <div className=" flex items-center gap-3">
         <h2
           className={`inline-flex w-fit rounded-full px-3 py-1 text-sm font-medium ${
