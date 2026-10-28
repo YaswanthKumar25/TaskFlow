@@ -24,8 +24,12 @@ const Task = ({ task, deleteTask, edittask, varient, setEditTask }) => {
     .join(" ");
   return (
     <div className="my-3 flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md">
-      <h1>{task.title}</h1>
-      <h2>{task.description}</h2>
+      <h1 className="break-words text-lg font-semibold text-gray-800">
+        {task.title}
+      </h1>
+      <p className="break-words whitespace-pre-wrap text-sm leading-6 text-gray-600">
+        {task.description}
+      </p>
       <h2>{task.due_date}</h2>
       <div className=" flex items-center gap-3">
         <h2
@@ -45,16 +49,18 @@ const Task = ({ task, deleteTask, edittask, varient, setEditTask }) => {
       </div>
       <div className="flex flex-col gap-5 mt-5">
         <button
+          aria-label={`Edit task: ${task.title}`}
           onClick={() => edittask(task)}
           className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors duration-200 hover:bg-blue-700"
         >
-          <FontAwesomeIcon icon={faPencil} /> Edit
+          <FontAwesomeIcon icon={faPencil} aria-label="true" /> Edit
         </button>
         <button
+          aria-label={`Delete task: ${task.title}`}
           onClick={() => deleteTask(task.id)}
           className="rounded-lg bg-red-600 px-4 py-2 text-white transition-colors duration-200 hover:bg-red-700"
         >
-          <FontAwesomeIcon icon={faTrash} /> Delete
+          <FontAwesomeIcon icon={faTrash} aria-label="true" /> Delete
         </button>
       </div>
     </div>
