@@ -11,13 +11,35 @@ import { getErrorMessage } from "./utils";
 const Tasks = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
   const [editTask, setEditTask] = useState(null);
   const [loading, setloading] = useState(true);
-  const completedTasks = tasks.filter((task) => task.status === "completed");
-  const in_progressTasks = tasks.filter(
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch = task.title
+      .toLowerCase()
+      .includes(search.trim().toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || task.status === statusFilter;
+    const matchesPriority =
+      priorityFilter === "all" || task.priority === priorityFilter;
+    return matchesSearch && matchesStatus && matchesPriority;
+  });
+  const hasActiveFilters =
+    search.trim() !== "" || statusFilter !== "all" || priorityFilter !== "all";
+
+  const completedTasks = filteredTasks.filter(
+    (task) => task.status === "completed",
+  );
+
+  const in_progressTasks = filteredTasks.filter(
     (task) => task.status === "in_progress",
   );
-  const pendingTasks = tasks.filter((task) => task.status === "pending");
+
+  const pendingTasks = filteredTasks.filter(
+    (task) => task.status === "pending",
+  );
 
   const getTasks = useCallback(async () => {
     try {
@@ -62,13 +84,46 @@ const Tasks = () => {
 
   return (
     <>
-      <div className="flex min-h-screen w-full flex-col bg-gray-300 lg:flex-row">
+      <div className="flex min-h-screen w-full flex-col bg-gray-300">
         {loading ? (
           <h1 className="text-5xl text-center">
             <FontAwesomeIcon icon={faSpinner} spin /> Loading ...
           </h1>
         ) : (
           <>
+            <div className="w-full px-4 pt-5">
+              <input
+                type="text"
+                placeholder="Search tasks by title..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              />
+            </div>
+            <div className="w-full px-4 pb-2">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 focus:border-blue-500 focus:outline-none sm:w-64"
+                aria-label="Filter tasks by status"
+              >
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <select
+              value={priorityFilter}
+              onChange={(e) => setPriorityFilter(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 focus:border-blue-500 focus:outline-none sm:w-64"
+              aria-label="Filter tasks by priority"
+            >
+              <option value="all">All Priorities</option>
+              <option value="low">Low Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="high">High Priority</option>
+            </select>
             <div className="grid grid-cols-1 gap-5 px-4 py-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8 lg:w-full">
               <div className="flex flex-col w-full">
                 <h1 className="text-center sm:text-xl lg:text-2xl font-semibold">
@@ -92,7 +147,9 @@ const Tasks = () => {
                       aria-hidden="true"
                     />
                     <p className="text-base">
-                      No completed tasks yet. Complete a task to see it here!
+                      {hasActiveFilters
+                        ? "No matching Completed tasks found."
+                        : "No Completed tasks yet. Create a task to get started!"}
                     </p>
                   </div>
                 )}
@@ -119,7 +176,9 @@ const Tasks = () => {
                       aria-hidden="true"
                     />
                     <p className="text-base">
-                      No In Progress tasks yet. Add a task to see it here!
+                      {hasActiveFilters
+                        ? "No matching In Progress tasks found."
+                        : "No In Progress tasks yet. Create a task to get started!"}
                     </p>
                   </div>
                 )}
@@ -146,7 +205,9 @@ const Tasks = () => {
                       aria-hidden="true"
                     />
                     <p className="text-base">
-                      No Pending tasks yet. Create a task to see it here!
+                      {hasActiveFilters
+                        ? "No matching pending tasks found."
+                        : "No pending tasks yet. Create a task to get started!"}
                     </p>
                   </div>
                 )}
