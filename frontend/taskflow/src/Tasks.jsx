@@ -13,9 +13,11 @@ const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("none");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [editTask, setEditTask] = useState(null);
   const [loading, setloading] = useState(true);
+
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch = task.title
       .toLowerCase()
@@ -26,20 +28,34 @@ const Tasks = () => {
       priorityFilter === "all" || task.priority === priorityFilter;
     return matchesSearch && matchesStatus && matchesPriority;
   });
+
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    if (sortBy === "due_date") {
+      return new Date(a.due_date) - new Date(b.due_date);
+    }
+    if (sortBy === "priority") {
+      const priorityOrder = {
+        high: 1,
+        medium: 2,
+        low: 3,
+      };
+      return priorityOrder[a.priority] - priorityOrder[b.priority];
+    }
+    return 0;
+  });
+
   const hasActiveFilters =
     search.trim() !== "" || statusFilter !== "all" || priorityFilter !== "all";
 
-  const completedTasks = filteredTasks.filter(
+  const completedTasks = sortedTasks.filter(
     (task) => task.status === "completed",
   );
 
-  const in_progressTasks = filteredTasks.filter(
+  const in_progressTasks = sortedTasks.filter(
     (task) => task.status === "in_progress",
   );
 
-  const pendingTasks = filteredTasks.filter(
-    (task) => task.status === "pending",
-  );
+  const pendingTasks = sortedTasks.filter((task) => task.status === "pending");
 
   const getTasks = useCallback(async () => {
     try {
@@ -124,6 +140,18 @@ const Tasks = () => {
               <option value="medium">Medium Priority</option>
               <option value="high">High Priority</option>
             </select>
+            <div className="w-full px-4 pb-2">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 focus:border-blue-500 focus:outline-none sm:w-64"
+                aria-label="Sort tasks"
+              >
+                <option value="none">Default Order</option>
+                <option value="dueDate">Due Date (Earliest First)</option>
+                <option value="priority">Priority (High to Low)</option>
+              </select>
+            </div>
             <div className="grid grid-cols-1 gap-5 px-4 py-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8 lg:w-full">
               <div className="flex flex-col w-full">
                 <h1 className="text-center sm:text-xl lg:text-2xl font-semibold">
